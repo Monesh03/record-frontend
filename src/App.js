@@ -15,7 +15,6 @@ import Page7 from "./components/Page7";
 function App() {
   return (
     <Router>
-      <Navbar />
       <Routes>
         <Route path="/" element={<Register />} />
         <Route path="/login" element={<Login />} />
@@ -31,25 +30,6 @@ function App() {
   );
 }
 
-// ✅ Dynamic Navbar component
-function Navbar() {
-  const location = useLocation();
 
-  // Define which routes are "public"
-  const isPublicPage =
-    location.pathname === "/" || location.pathname === "/login";
-
-  return (
-    <nav className="bg-orange-500 text-white p-4 flex justify-between">
-      <h1 className="font-bold text-xl">RECORD</h1>
-      {isPublicPage && (
-        <div className="space-x-4">
-          <Link to="/" className="hover:underline">Register</Link>
-          <Link to="/login" className="hover:underline">Login</Link>
-        </div>
-      )}
-    </nav>
-  );
-}
 
 export default App;
