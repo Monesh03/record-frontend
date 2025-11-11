@@ -17,8 +17,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-   "start": "react-scripts start --no-source-maps",
-  "build": "react-scripts build --no-source-maps",
+    "start": "react-scripts start --no-source-maps",
+    "build": "react-scripts build --no-source-maps",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.16",
-    "autoprefixer": "^10.4.21",
+    "autoprefixer": "^10.4.22",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.18"
   }
