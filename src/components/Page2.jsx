@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useFormStep } from "../hooks/useFormStep";
-import LogoutButton from "./LogoutButton";
 import { useNavigate } from "react-router-dom";
 import ProgressHeader from "./ProgressHeader";
 
@@ -75,7 +74,7 @@ const Page2 = () => {
   return (
     <div className="relative min-h-screen flex flex-col justify-center bg-gray-50 px-4 sm:px-6">
       <ProgressHeader currentStep={2} totalSteps={6} />
-      <LogoutButton />
+    
 
       <div className="w-full max-w-[960px] mx-auto pl-8 sm:pl-40 md:pl-60 lg:pl-80">
         <div className="max-w-[720px] mx-auto">
