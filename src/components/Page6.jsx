@@ -1,222 +1,194 @@
-import React, { useEffect, useState } from "react";
-import LogoutButton from "./LogoutButton";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { Menu, X, Bell, Settings, TrendingUp, BookOpen, Briefcase, Wrench, HelpCircle, MessageSquare } from 'lucide-react';
 
-const Page6 = () => {
-  const [formData, setFormData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState(null);
-  const navigate = useNavigate();
-
-  // 🟢 Fetch all step data + profile pic
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/form", {
-          credentials: "include",
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setFormData(data);
-          if (data?.profilePic) {
-            const fullUrl = data.profilePic.startsWith("http")
-              ? data.profilePic
-              : `http://localhost:5000${data.profilePic}`;
-            setPreview(fullUrl);
-          } else setPreview(null);
-        } else {
-          setFormData(null);
-        }
-      } catch (err) {
-        console.error("Error fetching data:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  // 🟢 Upload profile picture
-  const handleUpload = async () => {
-    if (!file) return alert("Please select an image first.");
-    const formDataObj = new FormData();
-    formDataObj.append("profilePic", file);
-
-    try {
-      const res = await fetch("http://localhost:5000/api/form/upload-profile", {
-        method: "POST",
-        credentials: "include",
-        body: formDataObj,
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setPreview(`http://localhost:5000${data.imagePath}`);
-        alert("Profile picture uploaded successfully!");
-      } else {
-        alert(data.message || "Upload failed");
-      }
-    } catch (err) {
-      console.error("Upload error:", err);
-      alert("Network error during upload");
-    }
-  };
-
-  // 🟢 Final submission
-  const handleSubmit = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/api/form/submit", {
-        method: "POST",
-        credentials: "include",
-      });
-      if (res.ok) navigate("/page7");
-      else alert("Error submitting form. Please try again.");
-    } catch {
-      alert("Network error while submitting form.");
-    }
-  };
-
-  if (loading) return <p className="text-center mt-10">Loading review data...</p>;
+export default function Dashboard() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-center bg-gray-100 px-4 sm:px-6 lg:px-8 py-8">
-      <LogoutButton />
+    <div className="flex h-screen bg-gray-50">
+      {/* Sidebar */}
+      <aside className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out`}>
+        {/* Logo/Brand */}
+        <div className="h-16 flex items-center px-6 border-b border-gray-200">
+          <div className="w-24 h-8 bg-orange-500 rounded"></div>
+        </div>
 
-      <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-5xl mx-auto">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-800 text-center">
-          Review & Submit
-        </h2>
+        {/* Navigation */}
+        <nav className="px-4 pt-4 space-y-0.5">
+          <a href="#" className="flex items-center gap-3 px-3 py-2.5 text-orange-500 bg-orange-50 rounded-lg font-medium text-sm">
+            <BookOpen size={18} />
+            <span>Dashboard</span>
+          </a>
+          <a href="#" className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg text-sm">
+            <Settings size={18} />
+            <span>Profile</span>
+          </a>
+          <a href="#" className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg text-sm">
+            <TrendingUp size={18} />
+            <span>Skill Repository</span>
+          </a>
+          <a href="#" className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg text-sm">
+            <BookOpen size={18} />
+            <span>Learnings</span>
+          </a>
+          <a href="#" className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg text-sm">
+            <Briefcase size={18} />
+            <span>Jobs</span>
+          </a>
+          <a href="#" className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg text-sm">
+            <Wrench size={18} />
+            <span>Tools</span>
+          </a>
+        </nav>
 
-        {/* 🖼 PROFILE PICTURE */}
-        <div className="mb-8 text-center">
-          <h3 className="font-semibold text-gray-700 mb-3">Profile Picture</h3>
-          {preview ? (
-            <img
-              src={preview}
-              alt="Profile"
-              className="w-24 h-24 sm:w-32 sm:h-32 rounded-full mx-auto mb-3 object-cover border-2 border-gray-300"
-            />
-          ) : (
-            <img
-              src="/default-avatar.png"
-              alt="No profile"
-              className="w-24 h-24 sm:w-32 sm:h-32 rounded-full mx-auto mb-3 object-cover border-2 border-gray-200 opacity-70"
-            />
-          )}
-
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-3">
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setFile(e.target.files[0])}
-              className="text-sm text-gray-600"
-            />
-            <button
-              type="button"
-              onClick={handleUpload}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
-            >
-              Upload
-            </button>
+       {/* Sub-menu */}
+        <div className="px-4 mt-2">
+          <div className="space-y-0.5 pl-3">
+            <a href="#" className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg">
+              YouTube to Course
+            </a>
+            <a href="#" className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg">
+              One Click Resume
+            </a>
+            <a href="#" className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg">
+              AI Assessment
+            </a>
+            
+              <div className="flex items-center justify-between px-3 py-2 text-sm">
+                <span className="text-blue-500">Setup</span>
+                <span className="text-gray-400">56%</span>
+            </div>
           </div>
         </div>
 
-        {/* 🧾 REVIEW GRID (all cards in one responsive grid) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* PERSONAL DETAILS */}
-          <section className="border rounded-lg p-4 shadow-sm bg-gray-50">
-            <h3 className="font-semibold text-gray-700 mb-2">Personal Details</h3>
-            <p><strong>Name:</strong> {formData?.step1?.name || "—"}</p>
-            <p><strong>DOB:</strong> {formData?.step1?.dob || "—"}</p>
-            <p><strong>Gender:</strong> {formData?.step1?.gender || "—"}</p>
-            <p><strong>Contact:</strong> {formData?.step1?.contact || "—"}</p>
-            <p><strong>Address:</strong> {formData?.step1?.address || "—"}</p>
-          </section>
-
-          {/* EDUCATION DETAILS */}
-          <section className="border rounded-lg p-4 shadow-sm bg-gray-50">
-            <h3 className="font-semibold text-gray-700 mb-2">Education Details</h3>
-            <p><strong>Degree:</strong> {formData?.step2?.degree || "—"}</p>
-            <p><strong>University:</strong> {formData?.step2?.university || "—"}</p>
-            <p><strong>Year of Passing:</strong> {formData?.step2?.year || "—"}</p>
-            <p><strong>Grade / CGPA:</strong> {formData?.step2?.grade || "—"}</p>
-          </section>
-
-          {/* EXPERIENCE DETAILS */}
-          <section className="border rounded-lg p-4 shadow-sm bg-gray-50">
-            <h3 className="font-semibold text-gray-700 mb-2">Experience Details</h3>
-            <p><strong>Company:</strong> {formData?.step3?.company || "—"}</p>
-            <p><strong>Role:</strong> {formData?.step3?.role || "—"}</p>
-            <p><strong>Duration:</strong> {formData?.step3?.duration || "—"}</p>
-            <p><strong>Description:</strong> {formData?.step3?.description || "—"}</p>
-          </section>
-
-          {/* SKILLS */}
-          <section className="border rounded-lg p-4 shadow-sm bg-gray-50">
-            <h3 className="font-semibold text-gray-700 mb-2">Skills</h3>
-            <p>{formData?.step4?.skills?.join(", ") || "—"}</p>
-          </section>
-
-         {/* PROJECT DETAILS (spans full width on large screens) */}
-          <section className="border rounded-lg p-4 shadow-sm bg-gray-50 md:col-span-2">
-            <h3 className="font-semibold text-gray-700 mb-2">Project / Portfolio</h3>
-
-            <p><strong>Title:</strong> {formData?.step5?.projectTitle || "—"}</p>
-            <p><strong>Description:</strong> {formData?.step5?.projectDescription || "—"}</p>
-
-            <p>
-              <strong>GitHub:</strong>{" "}
-              {formData?.step5?.githubLink ? (
-                <a
-                  href={formData.step5.githubLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline break-all"
-                >
-                  {formData.step5.githubLink}
-                </a>
-              ) : (
-                "—"
-              )}
-            </p>
-
-            <p>
-              <strong>Demo:</strong>{" "}
-              {formData?.step5?.demoLink ? (
-                <a
-                  href={formData.step5.demoLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline break-all"
-                >
-                  {formData.step5.demoLink}
-                </a>
-              ) : (
-                "—"
-              )}
-            </p>
-          </section>
-
+        {/* Footer Links */}
+        <div className="absolute bottom-0 left-0 right-0 p-3 border-t border-gray-200 bg-white">
+          <div className="space-y-0.5 mb-2">
+            <a href="#" className="flex items-center gap-3 px-3 py-1.5 text-gray-600 hover:bg-gray-50 rounded-lg text-xs">
+              <HelpCircle size={14} />
+              <span>Support</span>
+            </a>
+            <a href="#" className="flex items-center gap-3 px-3 py-1.5 text-gray-600 hover:bg-gray-50 rounded-lg text-xs">
+              <MessageSquare size={14} />
+              <span>Feedback</span>
+            </a>
+          </div>
+          <div className="text-xs text-gray-400 leading-tight px-3">
+            <div className="flex gap-1.5 mb-1">
+              <a href="#" className="hover:text-gray-600">Privacy Policy</a>
+              <span>|</span>
+              <a href="#" className="hover:text-gray-600">Terms & Conditions</a>
+            </div>
+            <p>© 2025 Second Innovation and</p>
+            <p>Enterprise Pvt. Ltd.</p>
+          </div>
         </div>
+      </aside>
 
-        {/* ✅ ACTION BUTTONS */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mt-8">
-          <button
-            onClick={() => navigate("/page5")}
-            className="w-full sm:w-auto px-6 py-2 bg-gray-300 rounded-md hover:bg-gray-400 transition"
-          >
-            Back
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="w-full sm:w-auto px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
-          >
-            Submit
-          </button>
-        </div>
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-6">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden p-2 hover:bg-gray-100 rounded-lg"
+            >
+              {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+            <h1 className="text-lg font-semibold text-gray-800">Dashboard</h1>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <button className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg text-sm hover:bg-gray-800">
+              <span>✨</span>
+              <span>Upgrade</span>
+            </button>
+            <button className="p-2 hover:bg-gray-100 rounded-lg relative">
+              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" strokeWidth="2"/>
+                <line x1="12" y1="8" x2="12" y2="16" strokeWidth="2"/>
+                <line x1="8" y1="12" x2="16" y2="12" strokeWidth="2"/>
+              </svg>
+            </button>
+            <button className="p-2 hover:bg-gray-100 rounded-lg relative">
+              <div className="w-2 h-2 bg-red-500 rounded-full absolute top-1.5 right-1.5"></div>
+              <Bell size={20} className="text-gray-600" />
+            </button>
+            <div className="w-10 h-10 bg-pink-500 rounded-full flex items-center justify-center text-white font-semibold">
+              kj{/*Profile photo*/}
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-y-auto p-4 lg:p-6">
+          <div className="max-w-7xl mx-auto space-y-6">
+            {/* Welcome Banner and Skill Badges Row */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+              {/* Welcome Banner */}
+              <div className="lg:col-span-2 bg-gradient-to-r from-blue-600 to-blue-400 rounded-2xl p-6 lg:p-8 text-white relative overflow-hidden">
+                <div className="absolute inset-0 opacity-10">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                  <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-white rounded-full translate-y-1/2"></div>
+                </div>
+                <div className="relative z-10">
+                  <h2 className="text-2xl lg:text-3xl font-bold mb-2">Welcome back, kj.!{/* Name */}</h2>
+                  <p className="text-blue-100 mb-4">You can now turn your YouTube Playlists into Courses</p>
+                  <button className="px-6 py-2 bg-white text-blue-600 rounded-lg font-medium hover:bg-blue-50">
+                    Explore Now →
+                  </button>
+                </div>
+              </div>
+
+              {/* Skill Badges */}
+              <div className="bg-white rounded-xl p-6 border border-gray-200">
+                <h3 className="text-sm font-semibold text-gray-700 mb-6">Skill Badges</h3>
+                <div className="flex items-center justify-around">
+                  <div className="text-center">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
+                        <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                        </svg>
+                      </div>
+                      <span className="text-3xl font-bold text-gray-300">0</span>
+                    </div>
+                    <p className="text-xs text-gray-500">Role Based</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center">
+                        <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                        </svg>
+                      </div>
+                      <span className="text-3xl font-bold text-gray-300">0</span>
+                    </div>
+                    <p className="text-xs text-gray-500">Super Skills</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Course in Progress */}
+            <div className="bg-white rounded-xl p-6 border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800 mb-6">Course in-Progress</h3>
+              <div className="flex items-center justify-center h-40 text-gray-400">
+                No courses in progress at the moment.
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
+
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
     </div>
   );
-};
-
-export default Page6;
+}

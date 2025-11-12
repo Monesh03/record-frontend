@@ -111,7 +111,7 @@ export default function RecordLanding() {
 
                 <div className="flex items-center gap-4 md:gap-10 flex-wrap justify-center transform -translate-x-2 md:-translate-x-16 pt-2">
                   <img
-                    src="/zoho.jpg"
+                    src="/zoho1.jpg"
                     alt="Zoho"
                     className="h-5 filter grayscale opacity-75 hover:opacity-100"
                   />

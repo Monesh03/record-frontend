@@ -6,23 +6,22 @@ const LogoutButton = () => {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/auth/logout", {
+      const res = await fetch("//http://localhost:5000/api/auth/logout", {
         method: "POST",
         credentials: "include",
       });
       if (res.ok) navigate("/login");
-      else alert("Logout failed, please try again.");
+      else ;
     } catch {
-      alert("Network error while logging out.");
+      
     }
   };
 
   return (
     <button
       onClick={handleLogout}
-      className="absolute top-5 right-20 bg-orange-500 text-white px-4 py-3 -md hover:bg-orange-600 transition"
+      className="absolute top-5 right-20 bg-orange-500 text-white px-14 py-7 -md hover:bg-orange-600 transition"
     >
-      Logout
     </button>
   );
 };

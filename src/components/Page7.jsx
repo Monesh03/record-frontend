@@ -1,310 +1,194 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import LogoutButton from "./LogoutButton";
-import { Menu } from "lucide-react";
+import React, { useState } from 'react';
+import { Menu, X, Bell, Settings, TrendingUp, BookOpen, Briefcase, Wrench, HelpCircle, MessageSquare } from 'lucide-react';
 
-const Page7 = () => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState("dashboard");
+export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/form", {
-          credentials: "include",
-        });
-        if (res.ok) {
-          const form = await res.json();
-          setData(form);
-        }
-      } catch (err) {
-        console.error("Error loading dashboard:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  return (
+    <div className="flex h-screen bg-gray-50">
+      {/* Sidebar */}
+      <aside className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out`}>
+        {/* Logo/Brand */}
+        <div className="h-16 flex items-center px-6 border-b border-gray-200">
+          <div className="w-24 h-8 bg-orange-500 rounded"></div>
+        </div>
 
-  if (loading) return <p className="text-center mt-10">Loading Dashboard...</p>;
-  if (!data) return <p className="text-center mt-10">No user data found.</p>;
+        {/* Navigation */}
+        <nav className="px-4 pt-4 space-y-0.5">
+          <a href="#" className="flex items-center gap-3 px-3 py-2.5 text-orange-500 bg-orange-50 rounded-lg font-medium text-sm">
+            <BookOpen size={18} />
+            <span>Dashboard</span>
+          </a>
+          <a href="#" className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg text-sm">
+            <Settings size={18} />
+            <span>Profile</span>
+          </a>
+          <a href="#" className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg text-sm">
+            <TrendingUp size={18} />
+            <span>Skill Repository</span>
+          </a>
+          <a href="#" className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg text-sm">
+            <BookOpen size={18} />
+            <span>Learnings</span>
+          </a>
+          <a href="#" className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg text-sm">
+            <Briefcase size={18} />
+            <span>Jobs</span>
+          </a>
+          <a href="#" className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg text-sm">
+            <Wrench size={18} />
+            <span>Tools</span>
+          </a>
+        </nav>
 
-  const fullImage =
-    data.profilePic && !data.profilePic.startsWith("http")
-      ? `http://localhost:5000${data.profilePic}`
-      : data.profilePic || "/default-avatar.png";
-
-  const sidebarItems = [
-    { name: "Dashboard Overview", key: "dashboard" },
-    { name: "Personal Details", key: "personal" },
-    { name: "Education Details", key: "education" },
-    { name: "Experience", key: "experience" },
-    { name: "Skills", key: "skills" },
-    { name: "Project Details", key: "project" },
-  ];
-
-  // Section Renderer
-  const renderSection = () => {
-    switch (activeSection) {
-      case "personal":
-        return (
-          <SectionCard
-            title="👤 Personal Details"
-            color="orange"
-            details={[
-              ["DOB", data.step1?.dob],
-              ["Gender", data.step1?.gender],
-              ["Contact", data.step1?.contact],
-              ["Address", data.step1?.address],
-            ]}
-          />
-        );
-      case "education":
-        return (
-          <SectionCard
-            title="🎓 Education Details"
-            color="blue"
-            details={[
-              ["Degree", data.step2?.degree],
-              ["University", data.step2?.university],
-              ["Year", data.step2?.year],
-              ["Grade", data.step2?.grade],
-            ]}
-          />
-        );
-      case "experience":
-        return (
-          <SectionCard
-            title="💼 Experience"
-            color="green"
-            details={[
-              ["Company", data.step3?.company],
-              ["Role", data.step3?.role],
-              ["Duration", data.step3?.duration],
-              ["Description", data.step3?.description],
-            ]}
-          />
-        );
-      case "skills":
-        return (
-          <div className="bg-yellow-50 p-6 rounded-xl shadow-md border border-yellow-200">
-            <h3 className="text-xl font-bold text-yellow-600 mb-2">🧠 Skills</h3>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {data.step4?.skills?.length ? (
-                data.step4.skills.map((s, i) => (
-                  <span
-                    key={i}
-                    className="px-3 py-1 bg-yellow-200 text-yellow-800 rounded-full text-sm"
-                  >
-                    {s}
-                  </span>
-                ))
-              ) : (
-                <p>—</p>
-              )}
+       {/* Sub-menu */}
+        <div className="px-4 mt-2">
+          <div className="space-y-0.5 pl-3">
+            <a href="#" className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg">
+              YouTube to Course
+            </a>
+            <a href="#" className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg">
+              One Click Resume
+            </a>
+            <a href="#" className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg">
+              AI Assessment
+            </a>
+            
+              <div className="flex items-center justify-between px-3 py-2 text-sm">
+                <span className="text-blue-500">Setup</span>
+                <span className="text-gray-400">56%</span>
             </div>
           </div>
-        );
-     case "project":
-  return (
-    <div className="bg-purple-50 p-4 sm:p-6 rounded-xl shadow-md border border-purple-200">
-      <h3 className="text-xl font-bold text-purple-600 mb-3">🚀 Project Details</h3>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
-        <div>
-          <p className="font-semibold text-sm sm:text-base mb-1">Project Title</p>
-          <p className="text-sm sm:text-base bg-white border rounded-md p-2 shadow-sm">
-            {data.step5?.projectTitle || "—"}
-          </p>
         </div>
 
-        <div>
-          <p className="font-semibold text-sm sm:text-base mb-1">GitHub Link</p>
-          <a
-            href={data.step5?.githubLink || "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block text-blue-600 underline text-sm sm:text-base truncate"
-          >
-            {data.step5?.githubLink || "—"}
-          </a>
-        </div>
-
-        <div className="sm:col-span-2">
-          <p className="font-semibold text-sm sm:text-base mb-1">Description</p>
-          <p className="text-sm sm:text-base bg-white border rounded-md p-2 shadow-sm">
-            {data.step5?.projectDescription || "—"}
-          </p>
-        </div>
-
-        <div className="sm:col-span-2">
-          <p className="font-semibold text-sm sm:text-base mb-1">Live Demo</p>
-          <a
-            href={data.step5?.demoLink || "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block text-blue-600 underline text-sm sm:text-base truncate"
-          >
-            {data.step5?.demoLink || "—"}
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-
-  
-      default:
-        return (
-          <div className="space-y-8">
-            {/* Welcome Section */}
-            <div className="text-center bg-white p-6 md:p-10 rounded-2xl shadow border border-gray-200">
-              <img
-                src={fullImage}
-                alt="Profile"
-                className="w-24 h-24 md:w-28 md:h-28 mx-auto rounded-full border-4 border-orange-400 object-cover shadow-md mb-4"
-              />
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-1">
-                Welcome, {data.step1?.name || "User"} 👋
-              </h2>
-              <p className="text-gray-500">
-                {data?.user?.email || "Email not available"}
-              </p>
-            </div>
-
-            {/* Static Summary Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              <DashboardCard
-                title="🧾 Profile Completion"
-                value="100%"
-                desc="All onboarding steps completed"
-                color="bg-green-100 text-green-800 border-green-200"
-              />
-              <DashboardCard
-                title="📂 Uploaded Documents"
-                value="5"
-                desc="Profile, Resume, Certificates"
-                color="bg-blue-100 text-blue-800 border-blue-200"
-              />
-              <DashboardCard
-                title="⚙️ Status"
-                value="Active"
-                desc="Profile verified successfully"
-                color="bg-orange-100 text-orange-800 border-orange-200"
-              />
-            </div>
-
-            {/* Quick Info */}
+        {/* Footer Links */}
+        <div className="absolute bottom-0 left-0 right-0 p-3 border-t border-gray-200 bg-white">
+          <div className="space-y-0.5 mb-2">
+            <a href="#" className="flex items-center gap-3 px-3 py-1.5 text-gray-600 hover:bg-gray-50 rounded-lg text-xs">
+              <HelpCircle size={14} />
+              <span>Support</span>
+            </a>
+            <a href="#" className="flex items-center gap-3 px-3 py-1.5 text-gray-600 hover:bg-gray-50 rounded-lg text-xs">
+              <MessageSquare size={14} />
+              <span>Feedback</span>
+            </a>
           </div>
-        );
-    }
-  };
-
-  return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* ============ SIDEBAR ============ */}
-      {/* ============ SIDEBAR ============ */}
-      <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-md border-r border-gray-200 z-40 transform transition-transform duration-300 
-        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
-        md:translate-x-0`}
-      >
-        <div className="flex items-center justify-between p-5 border-b border-gray-200 bg-orange-50">
-          <h1 className="text-2xl font-bold text-orange-500">RECORD</h1>
-          <LogoutButton />
-        </div>
-
-        {/* Profile Info */}
-        <div className="p-6 text-center border-b border-gray-200">
-          <img
-            src={fullImage}
-            alt="Profile"
-            className="w-20 h-20 mx-auto rounded-full border-2 border-orange-400 object-cover mb-3"
-          />
-          <p className="font-semibold text-gray-800">{data.step1?.name || "User"}</p>
-          <p className="text-sm text-gray-500">{data.user?.email || "Email not available"}</p>
-        </div>
-
-        {/* Scrollable Menu */}
-        <div className="flex-1 p-6 overflow-y-auto">
-          <p className="font-semibold text-gray-700 mb-3">Menu</p>
-          <ul className="space-y-2">
-            {sidebarItems.map((item) => (
-              <li
-                key={item.key}
-                onClick={() => {
-                  setActiveSection(item.key);
-                  setSidebarOpen(false);
-                }}
-                className={`cursor-pointer p-2 rounded-md hover:bg-orange-100 ${
-                  activeSection === item.key ? "bg-orange-200 font-medium" : ""
-                }`}
-              >
-                {item.name}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Edit Profile — stays fixed at bottom */}
-        <div className="p-4 border-t border-gray-200 bg-white">
-          <Link
-            to="/page1"
-            className="block text-center bg-orange-500 text-white py-2 rounded-md hover:bg-orange-600 transition"
-          >
-            ✏️ Edit Profile
-          </Link>
+          <div className="text-xs text-gray-400 leading-tight px-3">
+            <div className="flex gap-1.5 mb-1">
+              <a href="#" className="hover:text-gray-600">Privacy Policy</a>
+              <span>|</span>
+              <a href="#" className="hover:text-gray-600">Terms & Conditions</a>
+            </div>
+            <p>© 2025 Second Innovation and</p>
+            <p>Enterprise Pvt. Ltd.</p>
+          </div>
         </div>
       </aside>
 
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-6">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden p-2 hover:bg-gray-100 rounded-lg"
+            >
+              {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+            <h1 className="text-lg font-semibold text-gray-800">Dashboard</h1>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <button className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg text-sm hover:bg-gray-800">
+              <span>✨</span>
+              <span>Upgrade</span>
+            </button>
+            <button className="p-2 hover:bg-gray-100 rounded-lg relative">
+              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" strokeWidth="2"/>
+                <line x1="12" y1="8" x2="12" y2="16" strokeWidth="2"/>
+                <line x1="8" y1="12" x2="16" y2="12" strokeWidth="2"/>
+              </svg>
+            </button>
+            <button className="p-2 hover:bg-gray-100 rounded-lg relative">
+              <div className="w-2 h-2 bg-red-500 rounded-full absolute top-1.5 right-1.5"></div>
+              <Bell size={20} className="text-gray-600" />
+            </button>
+            <div className="w-10 h-10 bg-pink-500 rounded-full flex items-center justify-center text-white font-semibold">
+              kj{/*Profile photo*/}
+            </div>
+          </div>
+        </header>
 
-      {/* ============ MAIN CONTENT ============ */}
-      <main className="flex-1 p-6 md:p-8 md:ml-64">
-        {/* Mobile Header */}
-        <div className="flex justify-between items-center mb-6 md:hidden">
-          <h1 className="text-2xl font-bold text-orange-500">RECORD</h1>
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="bg-orange-500 text-white p-2 rounded-md"
-          >
-            <Menu size={20} />
-          </button>
-        </div>
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-y-auto p-4 lg:p-6">
+          <div className="max-w-7xl mx-auto space-y-6">
+            {/* Welcome Banner and Skill Badges Row */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+              {/* Welcome Banner */}
+              <div className="lg:col-span-2 bg-gradient-to-r from-blue-600 to-blue-400 rounded-2xl p-6 lg:p-8 text-white relative overflow-hidden">
+                <div className="absolute inset-0 opacity-10">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                  <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-white rounded-full translate-y-1/2"></div>
+                </div>
+                <div className="relative z-10">
+                  <h2 className="text-2xl lg:text-3xl font-bold mb-2">Welcome back, kj.!{/* Name */}</h2>
+                  <p className="text-blue-100 mb-4">You can now turn your YouTube Playlists into Courses</p>
+                  <button className="px-6 py-2 bg-white text-blue-600 rounded-lg font-medium hover:bg-blue-50">
+                    Explore Now →
+                  </button>
+                </div>
+              </div>
 
-        {renderSection()}
-      </main>
+              {/* Skill Badges */}
+              <div className="bg-white rounded-xl p-6 border border-gray-200">
+                <h3 className="text-sm font-semibold text-gray-700 mb-6">Skill Badges</h3>
+                <div className="flex items-center justify-around">
+                  <div className="text-center">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
+                        <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                        </svg>
+                      </div>
+                      <span className="text-3xl font-bold text-gray-300">0</span>
+                    </div>
+                    <p className="text-xs text-gray-500">Role Based</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center">
+                        <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                        </svg>
+                      </div>
+                      <span className="text-3xl font-bold text-gray-300">0</span>
+                    </div>
+                    <p className="text-xs text-gray-500">Super Skills</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Course in Progress */}
+            <div className="bg-white rounded-xl p-6 border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800 mb-6">Course in-Progress</h3>
+              <div className="flex items-center justify-center h-40 text-gray-400">
+                No courses in progress at the moment.
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
     </div>
   );
-};
-
-// ✅ Reusable Section Card
-const SectionCard = ({ title, color, details }) => (
-  <div
-    className={`p-6 rounded-xl shadow-md border border-${color}-200 bg-${color}-50 transition-all`}
-  >
-    <h3 className={`text-xl font-bold text-${color}-600 mb-2`}>{title}</h3>
-    <div className="mt-3 space-y-1 text-gray-700 text-sm md:text-base">
-      {details.map(([label, value], i) => (
-        <p key={i}>
-          <strong>{label}:</strong> {value || "—"}
-        </p>
-      ))}
-    </div>
-  </div>
-);
-
-// ✅ Dashboard Card Component (Fully Responsive)
-const DashboardCard = ({ title, value, desc, color }) => (
-  <div
-    className={`p-4 sm:p-5 rounded-xl shadow-md border ${color} flex flex-col justify-center items-center text-center w-full transition-transform hover:scale-[1.02]`}
-  >
-    <h4 className="text-base sm:text-lg font-semibold mb-1 text-gray-800">{title}</h4>
-    <p className="text-2xl sm:text-3xl font-bold mb-1">{value}</p>
-    <p className="text-xs sm:text-sm text-gray-600">{desc}</p>
-  </div>
-);
-
-
-
-export default Page7;
+}
