@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import ProgressHeader from "./ProgressHeader";
 import { useNavigate } from "react-router-dom";
 
 export default function RecordLanding() {
   const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState(3);
   const handleContinue = () => {
     navigate("/page4");
   };
@@ -18,7 +19,11 @@ export default function RecordLanding() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f7fbff] via-white to-[#fff5f6] flex flex-col overflow-hidden">
-      <ProgressHeader currentStep={3} totalSteps={6} />
+       <ProgressHeader
+        currentStep={currentStep}
+        setCurrentStep={setCurrentStep}
+        onBack={(newStep) => navigate(`/page${newStep}`)} // parent decides navigation
+      />
 
       {/* Main scrollable content */}
       <div className="flex-1 overflow-y-auto pb-20 mt-20">
@@ -117,9 +122,9 @@ export default function RecordLanding() {
 
                   <div className="flex items-center gap-6 sm:gap-8 md:gap-10 flex-wrap justify-center transform -translate-x-2 md:-translate-x-16 pt-2">
                     <img
-                      src="/zoho1.jpg"
+                      src="/Z.png"
                       alt="Zoho"
-                      className="h-5 sm:h-6 md:h-5 filter grayscale opacity-75 hover:opacity-100"
+                      className="h-12 sm:h-14 md:h-19 filter grayscale opacity-75 hover:opacity-100"
                     />
                     <img
                       src="/aws2.png"

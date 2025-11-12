@@ -15,6 +15,7 @@ const Page6 = () => {
   const [saving, setSaving] = useState(false);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState(5);
 
   // Prefill local state from useFormStep data whenever it becomes available
   useEffect(() => {
@@ -131,7 +132,11 @@ const Page6 = () => {
 
   return (
     <div className="relative min-h-screen bg-white">
-      <ProgressHeader currentStep={5} totalSteps={6} />
+       <ProgressHeader
+        currentStep={currentStep}
+        setCurrentStep={setCurrentStep}
+        onBack={(newStep) => navigate(`/page${newStep}`)} // parent decides navigation
+      />
       <div className="w-full max-w-[720px] mx-auto pt-24 pb-32 px-4 ">
         <div className="max-w-[520px] mx-auto text-center pt-8">
           <h2 className="text-[20px] sm:text-[22px] font-semibold text-gray-800 mb-1">Set your profile</h2>

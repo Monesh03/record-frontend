@@ -37,7 +37,7 @@ const Login = () => {
       if (res.ok) {
         // ✅ Check submission status from backend
         if (data.isSubmitted) {
-          navigate("/page7", { state: { username: data.user.name } });
+          navigate("/page6", { state: { username: data.user.name } });
         } else {
           navigate("/page1", { state: { username: data.user.name } });
         }
@@ -190,7 +190,7 @@ const Login = () => {
             Need an account?{" "}
             <button
               type="button"
-              onClick={() => navigate('/Register')}
+              onClick={() => navigate('/')}
               className="text-gray-700 font-medium hover:text-pink-500 transition-colors cursor-pointer bg-transparent border-none underline-offset-2 hover:underline"
             >
               SIGN UP

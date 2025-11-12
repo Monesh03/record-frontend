@@ -10,6 +10,7 @@ const Page2 = () => {
   const { data, save, loading } = useFormStep(2);
   const { register, handleSubmit, reset, getValues } = useForm();
   const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState(2);
 
   const [user, setUser] = useState(null);
   const [userLoading, setUserLoading] = useState(true);
@@ -73,7 +74,11 @@ const Page2 = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col justify-center bg-gray-50 px-4 sm:px-6">
-      <ProgressHeader currentStep={2} totalSteps={6} />
+       <ProgressHeader
+        currentStep={currentStep}
+        setCurrentStep={setCurrentStep}
+        onBack={(newStep) => navigate(`/page${newStep}`)} // parent decides navigation
+      />
     
 
       <div className="w-full max-w-[960px] mx-auto pl-8 sm:pl-40 md:pl-60 lg:pl-80">

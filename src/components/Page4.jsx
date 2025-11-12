@@ -31,6 +31,7 @@ const Page4 = () => {
   const [showMoreBusiness, setShowMoreBusiness] = useState(false);
   const [showMoreDesign, setShowMoreDesign] = useState(false);
   const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState(4);
 
   // Prefill
   useEffect(() => {
@@ -119,8 +120,11 @@ const Page4 = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col justify-center bg-gray-100 px-4 sm:px-6 pb-24 pt-20 overflow-y-auto ">
-      <ProgressHeader currentStep={4} totalSteps={6} />
-
+      <ProgressHeader
+  currentStep={currentStep}
+  setCurrentStep={setCurrentStep}
+  onBack={(newStep) => navigate(`/page${newStep}`)} // parent decides navigation
+/>
       <div className="w-full max-w-[960px] mx-auto ">
         <br></br>
         <h2 className="text-2xl font-semibold mb-2 text-gray-800 text-center">

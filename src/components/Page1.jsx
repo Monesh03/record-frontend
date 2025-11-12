@@ -11,7 +11,7 @@ const Page1 = () => {
   const { data, save, loading } = useFormStep(1);
   const { register, handleSubmit, reset, getValues, setValue } = useForm();
   const navigate = useNavigate();
-
+  const [currentStep, setCurrentStep] = useState(1);
   const [user, setUser] = useState(null);
   const [userLoading, setUserLoading] = useState(true);
 
@@ -72,7 +72,11 @@ const Page1 = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-white px-6 sm:px-8">
-      <ProgressHeader currentStep={1} totalSteps={6} />
+       <ProgressHeader
+        currentStep={currentStep}
+        setCurrentStep={setCurrentStep}
+        onBack={(newStep) => navigate(`/page${newStep}`)} // parent decides navigation
+      />
       <LogoutButton />
 
       {/* central column */}

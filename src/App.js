@@ -9,7 +9,7 @@ import Page3 from "./components/Page3";
 import Page4 from "./components/Page4";
 import Page5 from "./components/Page5";
 import Page6 from "./components/Page6";
-import Page7 from "./components/Page7";
+
 
 
 function App() {
@@ -24,7 +24,6 @@ function App() {
         <Route path="/page4" element={<PrivateRoute><Page4 /></PrivateRoute>} />
         <Route path="/page5" element={<PrivateRoute><Page5 /></PrivateRoute>} />
         <Route path="/page6" element={<PrivateRoute><Page6 /></PrivateRoute>} />
-        <Route path="/page7" element={<PrivateRoute><Page7 /></PrivateRoute>} />
       </Routes>
     </Router>
   );
