@@ -1,31 +1,68 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useFormStep } from "../hooks/useFormStep";
 import LogoutButton from "./LogoutButton";
 import { useNavigate } from "react-router-dom";
 import ProgressHeader from "./ProgressHeader";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+
 const Page1 = () => {
   const { data, save, loading } = useFormStep(1);
-  const { register, handleSubmit, reset, getValues } = useForm(); // ✅ added getValues
+  const { register, handleSubmit, reset, getValues, setValue } = useForm();
   const navigate = useNavigate();
 
-  // ✅ Prefill form when revisiting
-  React.useEffect(() => {
+  const [user, setUser] = useState(null);
+  const [userLoading, setUserLoading] = useState(true);
+
+  // Prefill form when revisiting
+  useEffect(() => {
     if (Object.keys(data).length > 0) reset(data);
   }, [data, reset]);
 
-  // ✅ Save before moving forward
+  // Fetch current user from backend (verify token)
+  useEffect(() => {
+    let mounted = true;
+    const fetchUser = async () => {
+      try {
+        setUserLoading(true);
+        const res = await fetch(`${API_BASE_URL}/api/auth/verify`, {
+          credentials: "include",
+        });
+        const json = await res.json();
+        if (res.ok && json.user && mounted) {
+          setUser(json.user);
+          // prefill name field if not already set
+          setValue("name", json.user.name || "");
+        }
+      } catch (err) {
+        console.error("Error fetching current user:", err);
+      } finally {
+        if (mounted) setUserLoading(false);
+      }
+    };
+
+    fetchUser();
+    return () => {
+      mounted = false;
+    };
+  }, [setValue]);
+
+  // Save before moving forward
   const onSubmit = async (values) => {
     await save(values);
     navigate("/page2");
   };
 
-  // ✅ Save progress even if user leaves or refreshes page
-  React.useEffect(() => {
+  // Save progress even if user leaves or refreshes page
+  useEffect(() => {
     const handleBeforeUnload = () => {
-      const values = getValues();
-      if (Object.keys(values).length > 0) save(values);
+      try {
+        const values = getValues();
+        if (values && Object.keys(values).length > 0) save(values);
+      } catch (err) {
+        // ignore
+      }
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
@@ -36,14 +73,14 @@ const Page1 = () => {
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-white px-6 sm:px-8">
       <ProgressHeader currentStep={1} totalSteps={6} />
-  
+      <LogoutButton />
 
       {/* central column */}
       <div className="w-full max-w-[440px] mx-auto py-12 sm:py-16">
         {/* header */}
         <div className="mb-10 text-center sm:text-left">
           <h2 className="text-[28px] sm:text-[32px] leading-tight font-semibold mb-2 text-gray-900">
-            It's your time!
+            It’s your time!
           </h2>
           <p className="text-[13px] sm:text-[15px] text-gray-400">
             Let us know about yourself first.
@@ -58,6 +95,7 @@ const Page1 = () => {
               type="text"
               placeholder="Your Name"
               {...register("name", { required: true })}
+              defaultValue={user?.name || ""}
               className="w-full rounded-md border border-gray-100 bg-white/0 py-3 px-3 text-[15px] text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-0 focus:border-gray-300 transition-shadow shadow-sm"
               style={{ boxShadow: "inset 0 0 0 1px rgba(229,231,235,0.8)" }}
             />
@@ -133,39 +171,32 @@ const Page1 = () => {
               </svg>
             </div>
           </div>
-
-          {/* (No inline continue button here — bottom bar handles it) */}
         </form>
       </div>
 
-     {/* bottom persistent bar — aligned right with blue hover */}
-<div className="fixed bottom-0 left-0 right-0 bg-[#1a1a1a] py-3.5 px-6">
-  <div className="flex justify-end items-center pr-6 sm:pr-10 gap-3">
-    {/* subtle instruction text */}
-    <span className="text-gray-400 text-[13px] italic tracking-wide opacity-85">
-      or press Enter
-    </span>
+      {/* bottom persistent bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-[#1a1a1a] py-3.5 px-6">
+        <div className="flex justify-end items-center pr-6 sm:pr-10 gap-3">
+          <span className="text-gray-400 text-[13px] italic tracking-wide opacity-85">
+            or press Enter
+          </span>
 
-    {/* Continue button with blue hover */}
-    <button
-      type="button"
-      onClick={handleSubmit(onSubmit)}
-      aria-label="Continue"
-      className="text-[14px] font-medium px-5 py-2 rounded-md shadow-sm
-                 bg-[#555] hover:bg-[#007BFF] text-white
-                 transition-colors duration-200 ease-in-out"
-    >
-      Continue
-    </button>
-  </div>
-</div>
+          <button
+            type="button"
+            onClick={handleSubmit(onSubmit)}
+            aria-label="Continue"
+            className="text-[14px] font-medium px-5 py-2 rounded-md shadow-sm bg-[#555] hover:bg-[#007BFF] text-white transition-colors duration-200 ease-in-out"
+          >
+            Continue
+          </button>
+        </div>
+      </div>
 
-
-      {/* small responsive adjustments */}
+      {/* responsive tweaks */}
       <style jsx>{`
         @media (max-width: 640px) {
-          /* make inputs slightly taller on small screens and full width spacing */
-          input, select {
+          input,
+          select {
             padding-top: 0.75rem;
             padding-bottom: 0.75rem;
           }
