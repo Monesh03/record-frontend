@@ -1,8 +1,103 @@
-import React, { useState } from 'react';
-import { Menu, X, Bell, Settings, TrendingUp, BookOpen, Briefcase, Wrench, HelpCircle, MessageSquare } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Menu, X, Bell, BookOpen, Settings, TrendingUp, Briefcase, Wrench, HelpCircle, MessageSquare } from 'lucide-react';
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // profile state
+  const [profileName, setProfileName] = useState('kj'); // fallback
+  const [profilePhoto, setProfilePhoto] = useState(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const extractName = (data) => {
+      if (!data) return null;
+
+      const tryValues = [];
+
+      // top-level common keys
+      tryValues.push(data.fullName, data.fullname, data.name, data.username, data.userName, data.displayName);
+
+      // nested user or profile objects
+      if (data.user && typeof data.user === 'object') {
+        tryValues.push(data.user.fullName, data.user.fullname, data.user.name, data.user.username, data.user.displayName);
+      }
+      if (data.profile && typeof data.profile === 'object') {
+        tryValues.push(data.profile.fullName, data.profile.name, data.profile.displayName);
+      }
+
+      // common fragments
+      if (data.firstName || data.lastName) {
+        tryValues.push(`${data.firstName || ''} ${data.lastName || ''}`.trim());
+      }
+      if (data.first_name || data.last_name) {
+        tryValues.push(`${data.first_name || ''} ${data.last_name || ''}`.trim());
+      }
+
+      // additional nested check e.g., data.user.profile
+      if (data.user && data.user.profile && typeof data.user.profile === 'object') {
+        tryValues.push(data.user.profile.fullName, data.user.profile.name, data.user.profile.displayName);
+      }
+
+      // return first non-empty trimmed value
+      for (const v of tryValues) {
+        if (typeof v === 'string') {
+          const t = v.trim();
+          if (t.length > 0) return t;
+        }
+      }
+      return null;
+    };
+
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/form', { credentials: 'include' });
+
+        if (!mounted) return;
+
+        if (res.ok) {
+          // parse and log the result so we can inspect the exact shape
+          const data = await res.json().catch(() => ({}));
+          console.debug('profileFetchResult:', data); // <-- check this in the browser console
+
+          // find profile picture in multiple common keys
+          const rawPic =
+            data.profilePic ||
+            data.profile_pic ||
+            data.profilePicPath ||
+            data.imagePath ||
+            data.profile_image ||
+            (data.user && (data.user.profilePic || data.user.profile_image)) ||
+            null;
+
+          if (rawPic) {
+            const full = rawPic.startsWith('http') ? rawPic : `http://localhost:5000${rawPic}`;
+            setProfilePhoto(full);
+          } else {
+            setProfilePhoto(null);
+          }
+
+          const name = extractName(data) || 'kj';
+          setProfileName(name);
+        } else {
+          // non-OK: keep defaults
+          console.warn('Profile fetch returned non-OK status', res.status);
+        }
+      } catch (err) {
+        console.error('Failed to fetch profile:', err);
+      } finally {
+        if (mounted) setLoadingProfile(false);
+      }
+    };
+
+    fetchProfile();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -41,7 +136,7 @@ export default function Dashboard() {
           </a>
         </nav>
 
-       {/* Sub-menu */}
+        {/* Sub-menu */}
         <div className="px-4 mt-2">
           <div className="space-y-0.5 pl-3">
             <a href="#" className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg">
@@ -53,10 +148,10 @@ export default function Dashboard() {
             <a href="#" className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg">
               AI Assessment
             </a>
-            
-              <div className="flex items-center justify-between px-3 py-2 text-sm">
-                <span className="text-blue-500">Setup</span>
-                <span className="text-gray-400">56%</span>
+
+            <div className="flex items-center justify-between px-3 py-2 text-sm">
+              <span className="text-blue-500">Setup</span>
+              <span className="text-gray-400">56%</span>
             </div>
           </div>
         </div>
@@ -98,7 +193,7 @@ export default function Dashboard() {
             </button>
             <h1 className="text-lg font-semibold text-gray-800">Dashboard</h1>
           </div>
-          
+
           <div className="flex items-center gap-3">
             <button className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg text-sm hover:bg-gray-800">
               <span>✨</span>
@@ -106,17 +201,25 @@ export default function Dashboard() {
             </button>
             <button className="p-2 hover:bg-gray-100 rounded-lg relative">
               <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" strokeWidth="2"/>
-                <line x1="12" y1="8" x2="12" y2="16" strokeWidth="2"/>
-                <line x1="8" y1="12" x2="16" y2="12" strokeWidth="2"/>
+                <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                <line x1="12" y1="8" x2="12" y2="16" strokeWidth="2" />
+                <line x1="8" y1="12" x2="16" y2="12" strokeWidth="2" />
               </svg>
             </button>
             <button className="p-2 hover:bg-gray-100 rounded-lg relative">
               <div className="w-2 h-2 bg-red-500 rounded-full absolute top-1.5 right-1.5"></div>
               <Bell size={20} className="text-gray-600" />
             </button>
-            <div className="w-10 h-10 bg-pink-500 rounded-full flex items-center justify-center text-white font-semibold">
-              kj{/*Profile photo*/}
+
+            {/* header avatar — fetched photo or initial */}
+            <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold overflow-hidden">
+              {profilePhoto ? (
+                <img src={profilePhoto} alt="profile" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-10 h-10 bg-pink-500 rounded-full flex items-center justify-center text-white font-semibold">
+                  {profileName ? profileName.charAt(0).toUpperCase() : 'K'}
+                </div>
+              )}
             </div>
           </div>
         </header>
@@ -133,7 +236,7 @@ export default function Dashboard() {
                   <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-white rounded-full translate-y-1/2"></div>
                 </div>
                 <div className="relative z-10">
-                  <h2 className="text-2xl lg:text-3xl font-bold mb-2">Welcome back, kj.!{/* Name */}</h2>
+                  <h2 className="text-2xl lg:text-3xl font-bold mb-2">Welcome back, {profileName}.</h2>
                   <p className="text-blue-100 mb-4">You can now turn your YouTube Playlists into Courses</p>
                   <button className="px-6 py-2 bg-white text-blue-600 rounded-lg font-medium hover:bg-blue-50">
                     Explore Now →

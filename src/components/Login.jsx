@@ -190,7 +190,7 @@ const Login = () => {
             Need an account?{" "}
             <button
               type="button"
-              onClick={() => navigate('/register')}
+              onClick={() => navigate('/Register')}
               className="text-gray-700 font-medium hover:text-pink-500 transition-colors cursor-pointer bg-transparent border-none underline-offset-2 hover:underline"
             >
               SIGN UP

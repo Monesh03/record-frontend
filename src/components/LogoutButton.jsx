@@ -19,10 +19,14 @@ const LogoutButton = () => {
 
   return (
     <button
-      onClick={handleLogout}
-      className="absolute top-5 right-20 bg-orange-500 text-white px-14 py-7 -md hover:bg-orange-600 transition"
-    >
-    </button>
+  className="absolute top-10 right-5 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition
+    sm:right-8 sm:px-6 sm:py-3
+    md:right-12 md:px-10 md:py-5 
+    lg:top-3 lg:right-16 lg:px-12 lg:py-6
+    xl:top-3 xl:right-20 xl:px-14 xl:py-7"
+>
+
+</button>
   );
 };
 
