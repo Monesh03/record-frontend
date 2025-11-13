@@ -53,7 +53,7 @@ export default function Dashboard() {
 
     const fetchProfile = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/form', { credentials: 'include' });
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/form`, { credentials: 'include' });
 
         if (!mounted) return;
 
@@ -73,7 +73,7 @@ export default function Dashboard() {
             null;
 
           if (rawPic) {
-            const full = rawPic.startsWith('http') ? rawPic : `http://localhost:5000${rawPic}`;
+            const full = rawPic.startsWith('http') ? rawPic : `${process.env.REACT_APP_API_URL}${rawPic}`;
             setProfilePhoto(full);
           } else {
             setProfilePhoto(null);

@@ -7,7 +7,8 @@ export function useFormStep(step) {
   const fetched = useRef(false);
 
   // ✅ Backend URL (for Create React App)
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
+
 
   // ✅ Fetch saved data from backend (once per user)
   useEffect(() => {

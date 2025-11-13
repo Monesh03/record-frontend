@@ -9,7 +9,7 @@ const PrivateRoute = ({ children }) => {
   useEffect(() => {
     const verifyUser = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/auth/verify", {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/verify`, {
           method: "GET",
           credentials: "include", // for JWT in cookies
         });

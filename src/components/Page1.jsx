@@ -5,7 +5,7 @@ import LogoutButton from "./LogoutButton";
 import { useNavigate } from "react-router-dom";
 import ProgressHeader from "./ProgressHeader";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+
 
 const Page1 = () => {
   const { data, save, loading } = useFormStep(1);
@@ -26,7 +26,7 @@ const Page1 = () => {
     const fetchUser = async () => {
       try {
         setUserLoading(true);
-        const res = await fetch(`${API_BASE_URL}/api/auth/verify`, {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/verify`, {
           credentials: "include",
         });
         const json = await res.json();

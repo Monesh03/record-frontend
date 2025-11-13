@@ -28,7 +28,7 @@ const Page6 = () => {
     if (stepData.profilePic) {
       const full = stepData.profilePic.startsWith("http")
         ? stepData.profilePic
-        : `http://localhost:5000${stepData.profilePic}`;
+        : `${process.env.REACT_APP_API_URL}${stepData.profilePic}`;
       setPreview(full);
     } else {
       setPreview(null);
@@ -46,7 +46,7 @@ const Page6 = () => {
     fd.append("profilePic", f);
 
     try {
-      const res = await fetch("http://localhost:5000/api/form/upload-profile", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/form/upload-profile`, {
         method: "POST",
         credentials: "include",
         body: fd,
@@ -55,7 +55,7 @@ const Page6 = () => {
 
       if (res.ok) {
         const path = resp.imagePath || resp.profilePic || resp.path || "";
-        const full = path && path.startsWith("http") ? path : `http://localhost:5000${path}`;
+        const full = path && path.startsWith("http") ? path : `${process.env.REACT_APP_API_URL}${path}`;
         setPreview(full);
 
         // Persist using useFormStep.save(...) so everything is stored via your app flow
@@ -109,7 +109,7 @@ const Page6 = () => {
       await save(payload);
 
       // final submit
-      const res = await fetch("http://localhost:5000/api/form/submit", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/form/submit`, {
         method: "POST",
         credentials: "include",
       });
